@@ -1,6 +1,7 @@
 package mini.Tweet;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class User extends UserManager implements Subject
@@ -113,5 +114,16 @@ public class User extends UserManager implements Subject
     public ArrayList<String> getFollowing()
     {
         return following;
+    }
+
+    public Collection getUsers()
+    {
+        return users.values();
+    }
+    
+    @Override
+    public void accept(InfoVisitor v) 
+    {
+        v.visit(this);
     }
 }

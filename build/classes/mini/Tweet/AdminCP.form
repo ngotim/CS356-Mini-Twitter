@@ -230,11 +230,17 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Show Messages Total"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="msgTotalActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="posPercentage">
       <Properties>
         <Property name="text" type="java.lang.String" value="Show Positive Percentage"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="posPercentageActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

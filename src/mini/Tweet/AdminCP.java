@@ -35,9 +35,7 @@ public class AdminCP extends javax.swing.JFrame implements TreeSelectionListener
     private AdminCP() {
         root = new UserGroup("Root");
         initComponents();
-        //makeTest();
         current = null;
-        //updateTree();
     }
 
     /**
@@ -167,8 +165,18 @@ public class AdminCP extends javax.swing.JFrame implements TreeSelectionListener
         });
 
         msgTotal.setText("Show Messages Total");
+        msgTotal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                msgTotalActionPerformed(evt);
+            }
+        });
 
         posPercentage.setText("Show Positive Percentage");
+        posPercentage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                posPercentageActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -249,9 +257,14 @@ public class AdminCP extends javax.swing.JFrame implements TreeSelectionListener
         else if(!User.exists(id))
         {
             User temp = new User(id, currentGroup.getID());
+            if(current == null)
+            {
+                current = temp;
+            }
             currentGroup.add(temp);
             DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
             model.insertNodeInto(new DefaultMutableTreeNode(temp), this.getCurrentGroup(), this.getCurrentGroup().getChildCount());
+            
         }
         else
         {
@@ -287,41 +300,34 @@ public class AdminCP extends javax.swing.JFrame implements TreeSelectionListener
     }//GEN-LAST:event_groupTotalActionPerformed
 
     private void userTotalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userTotalActionPerformed
-        JOptionPane.showMessageDialog(null, "Total Users: ");
+        UserVisitor uv = new UserVisitor();
+        if(current != null)
+        {
+            current.accept(uv);
+        }
     }//GEN-LAST:event_userTotalActionPerformed
 
-    public void updateTree()
-    {
-        DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
-        DefaultMutableTreeNode r = (DefaultMutableTreeNode)model.getRoot();
-        
-        addNodes(r, root);
-        model.reload();
-    }
-    
-    private void addNodes(DefaultMutableTreeNode tr, UserManager r) 
-    {
-        DefaultMutableTreeNode node;
-        for(UserManager um : r.getMembers())
+    private void msgTotalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_msgTotalActionPerformed
+        MessagesVisitor mv = new MessagesVisitor();
+        if(current != null)
         {
-            node = new DefaultMutableTreeNode(um);
-            tr.add(node);
-            if(um.getMembers() != null)
-                addNodes(node, um);
+            current.accept(mv);
         }
-    }
+    }//GEN-LAST:event_msgTotalActionPerformed
+
+    private void posPercentageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_posPercentageActionPerformed
+       PositiveVisitor pv = new PositiveVisitor();
+        if(current != null)
+        {
+            current.accept(pv);
+        }
+    }//GEN-LAST:event_posPercentageActionPerformed
+
     public static AdminCP getInstance()
     {
         return instance;
     }
 
-    public void makeTest()
-    {
-        UserGroup test1 = new UserGroup("Test");
-        test1.add(new User("Timmy", test1.getID()));
-        root.add(new User("Tim", root.getID()));
-        root.add(test1);
-    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addGroup;

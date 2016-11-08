@@ -46,4 +46,10 @@ public class UserGroup extends UserManager
     {
         return groups.get(s);
     }
+
+    @Override
+    public void accept(InfoVisitor v) 
+    {
+        v.visit(this);
+    }
 }

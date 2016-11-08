@@ -27,5 +27,5 @@ public abstract class UserManager
         return id;
     }
     public abstract ArrayList<UserManager> getMembers();
-    //public abstract int accept(Visitor v, int state); will implemet visitor
+    public abstract void accept(InfoVisitor v);
 }
