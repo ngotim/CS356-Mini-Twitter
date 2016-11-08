@@ -22,8 +22,8 @@ public class PositiveVisitor implements InfoVisitor
     @Override
     public void visit(User u) {
         File pos = new File("C:\\Users\\Timothy\\Documents\\NetBeansProjects\\Mini Twit\\src\\mini\\Tweet\\PositiveWords");
-        int total = 0;
-        int posTot = 0;
+        double total = 0;
+        double posTot = 0;
         ArrayList<String> words = new ArrayList<String>();
         
         try {
