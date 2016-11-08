@@ -7,7 +7,7 @@ public class User extends UserManager implements Subject
 {
     private String group; //Can only belong to one.
     private static HashMap<String, User> users = new HashMap<String, User>();
-    private ArrayList<NewsFeed> followers;
+    private ArrayList<Observer> followers;
     private ArrayList<String> following;
     private ArrayList<String> tweets;
     private NewsFeed nf;
@@ -17,7 +17,7 @@ public class User extends UserManager implements Subject
         if(!users.containsKey(id))
         {
             this.id = id;
-            followers = new ArrayList<NewsFeed>();
+            followers = new ArrayList<Observer>();
             following = new ArrayList<String>();
             tweets = new ArrayList<String>();
             this.group = group;
@@ -45,6 +45,10 @@ public class User extends UserManager implements Subject
     {
         users.get(id).register(nf);
         following.add(id);
+        for(String s : users.get(id).getTweets())
+        {
+            nf.update(s, users.get(id));
+        }
     }
     
     public void joinGroup(String id)
@@ -56,7 +60,10 @@ public class User extends UserManager implements Subject
     {
         return group;
     }
-    
+    public ArrayList<String> getTweets()
+    {
+        return tweets;
+    }
     public void tweet(String msg)
     {
         tweets.add(msg);
@@ -70,21 +77,24 @@ public class User extends UserManager implements Subject
         {
             System.out.println("Null observer");
         }
-        if(!followers.contains((NewsFeed)obj))
+        if(!followers.contains(obj))
         {
-            followers.add((NewsFeed) obj);
+            followers.add(obj);
         }
     }
 
     @Override
     public void notifyObs()
     {
-        for(NewsFeed nf : followers)
+        for(Observer obs : followers)
         {
-            nf.update(tweets.get(tweets.size()-1), this);
+            obs.update(tweets.get(tweets.size()-1), this);
         }
     }
-
+    public boolean isFollowing(String id)
+    {
+        return following.contains(id);
+    }
     @Override
     public Object getUpdate(Observer obj) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -98,5 +108,10 @@ public class User extends UserManager implements Subject
     @Override
     public ArrayList<UserManager> getMembers() {
         return null;
+    }
+    
+    public ArrayList<String> getFollowing()
+    {
+        return following;
     }
 }

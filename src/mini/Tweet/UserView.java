@@ -6,13 +6,15 @@
 package mini.Tweet;
 
 import java.util.ArrayList;
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
 /**
  *
  * @author Timothy
  */
-public class UserView extends javax.swing.JPanel {
+public class UserView extends javax.swing.JPanel implements Observer
+{
 
     /**
      * Creates new form UserView
@@ -21,6 +23,7 @@ public class UserView extends javax.swing.JPanel {
     public UserView(User u) 
     {
         current = u;
+        current.getFeed().register(this);
         initComponents();
     }
 
@@ -38,7 +41,7 @@ public class UserView extends javax.swing.JPanel {
         followID = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
+        following = new javax.swing.JList();
         jPanel3 = new javax.swing.JPanel();
         tweetBox = new javax.swing.JTextField();
         tweetBtn = new javax.swing.JButton();
@@ -52,8 +55,6 @@ public class UserView extends javax.swing.JPanel {
                 followBtnActionPerformed(evt);
             }
         });
-
-        followID.setText("User ID");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -78,12 +79,10 @@ public class UserView extends javax.swing.JPanel {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Following"));
 
-        jList1.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane1.setViewportView(jList1);
+        following.setModel(new javax.swing.DefaultListModel(){
+        } );
+        updateFollowing();
+        jScrollPane1.setViewportView(following);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -133,10 +132,8 @@ public class UserView extends javax.swing.JPanel {
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("News Feed"));
 
         newsFeed.setModel(new javax.swing.DefaultListModel() {
-            ArrayList<String> messages = current.getFeed().getFeed();
-            public int getSize() { return messages.size(); }
-            public Object getElementAt(int i) { return messages.get(i); }
         });
+        updateFeed();
         jScrollPane2.setViewportView(newsFeed);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -180,13 +177,18 @@ public class UserView extends javax.swing.JPanel {
 
     private void followBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_followBtnActionPerformed
         String id = followID.getText();
-        if(User.exists(id) && !current.getID().equals(id))
+        if(User.exists(id) && !current.getID().equals(id) && !current.isFollowing(id))
         {
             current.follow(id);
+            updateFollowing();
         }
         else if(current.getID().equals(id))
         {
             JOptionPane.showMessageDialog(null, "Cannot follow self.");
+        }
+        else if(current.isFollowing(id))
+        {
+            JOptionPane.showMessageDialog(null, "Already following " + id);
         }
         else
         {
@@ -196,14 +198,34 @@ public class UserView extends javax.swing.JPanel {
 
     private void tweetBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tweetBtnActionPerformed
         current.tweet(tweetBox.getText());
-        
     }//GEN-LAST:event_tweetBtnActionPerformed
-
+    private void updateFollowing()
+    {
+        DefaultListModel model = new DefaultListModel();
+        ArrayList<String> follow = current.getFollowing();
+        for(String s : follow)
+        {
+            model.addElement(s);
+        }
+        following.setModel(model);
+        following.setSelectedIndex(0);
+    }
+    private void updateFeed()
+    {
+        DefaultListModel model = new DefaultListModel();
+        ArrayList<String> feed = current.getFeed().getFeed();
+        for(String s : feed)
+        {
+            model.addElement(s);
+        }
+        newsFeed.setModel(model);
+        newsFeed.setSelectedIndex(0);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton followBtn;
     private javax.swing.JTextField followID;
-    private javax.swing.JList jList1;
+    private javax.swing.JList following;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -214,4 +236,9 @@ public class UserView extends javax.swing.JPanel {
     private javax.swing.JTextField tweetBox;
     private javax.swing.JButton tweetBtn;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void update(String msg, Subject sub) {
+        updateFeed();
+    }
 }

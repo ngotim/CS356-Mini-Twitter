@@ -35,9 +35,9 @@ public class AdminCP extends javax.swing.JFrame implements TreeSelectionListener
     private AdminCP() {
         root = new UserGroup("Root");
         initComponents();
-        makeTest();
+        //makeTest();
         current = null;
-        updateTree();
+        //updateTree();
     }
 
     /**
@@ -89,8 +89,6 @@ public class AdminCP extends javax.swing.JFrame implements TreeSelectionListener
                 .addComponent(sp, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE))
         );
 
-        userIDField.setText("User ID");
-
         addUser.setText("Add User");
         addUser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -118,8 +116,6 @@ public class AdminCP extends javax.swing.JFrame implements TreeSelectionListener
                     .addComponent(addUser))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
-
-        groupIDField.setText("Group ID");
 
         addGroup.setText("Add Group");
         addGroup.addActionListener(new java.awt.event.ActionListener() {
@@ -243,8 +239,14 @@ public class AdminCP extends javax.swing.JFrame implements TreeSelectionListener
     private void addUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUserActionPerformed
         String id = this.userIDField.getText();
         if(currentGroup == null)
+        {
             currentGroup = UserGroup.findGroup("Root");
-        if(!User.exists(id))
+        }
+        if(id.equals(""))
+        {
+            JOptionPane.showMessageDialog(null, "Please enter something");
+        }
+        else if(!User.exists(id))
         {
             User temp = new User(id, currentGroup.getID());
             currentGroup.add(temp);
@@ -260,8 +262,14 @@ public class AdminCP extends javax.swing.JFrame implements TreeSelectionListener
     private void addGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addGroupActionPerformed
         String id = this.groupIDField.getText();
         if(currentGroup == null)
+        {
             currentGroup = UserGroup.findGroup("Root");
-        if(!UserGroup.exists(id))
+        }
+        if(id.equals(""))
+        {
+            JOptionPane.showMessageDialog(null, "Please enter something");
+        }
+        else if(!UserGroup.exists(id))
         {
             UserGroup temp = new UserGroup(id);
             currentGroup.add(temp);
